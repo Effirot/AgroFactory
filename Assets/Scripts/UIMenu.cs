@@ -5,21 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class UIMenu : MonoBehaviour
 {
-    [SerializeField] private GameObject m_PauseMenu;
-    [SerializeField] private bool isPause = false;
-
-    private void Start()
-    {
-        Time.timeScale = 1;
-    }
-    public void ToggleMenu()
-    {
-        isPause = !isPause;
-        m_PauseMenu.SetActive(isPause);
-        Time.timeScale = isPause ? 0 : 1;
-    }
     public void ReloadActiveScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void Quit()
+    {
+        Application.Quit();
+    }
+    public void StartSceneByNum(int scene)
+    {
+        SceneManager.LoadScene(scene);
     }
 }
