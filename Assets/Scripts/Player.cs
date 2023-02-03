@@ -1,14 +1,14 @@
-
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private float _speed = 10f;
+    [SerializeField] private float _speedRotate = 5f;
     [SerializeField] private Transform rotateObject;
     private Rigidbody rigidbody;
     private Vector3 vector3;
-    private Vector3 vector3Rotate;
-    public float speedRotate = 10f;
+    private Vector3 vector3Rotate = new();
+
     private void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
@@ -16,7 +16,8 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         rigidbody.AddForce(vector3 * _speed);
-        rotateObject.rotation = Quaternion.Lerp(rotateObject.rotation,Quaternion.LookRotation(vector3Rotate),Time.deltaTime * speedRotate);
+        if (vector3Rotate != Vector3.zero)        
+            rotateObject.rotation = Quaternion.Lerp(rotateObject.rotation,Quaternion.LookRotation(vector3Rotate),Time.deltaTime * _speedRotate);
     }
     public void SetDirection(Vector3 vector)
     {
@@ -26,7 +27,4 @@ public class Player : MonoBehaviour
             vector3Rotate = vector;
         }
     }
-
-
-
 }
