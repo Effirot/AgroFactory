@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -13,13 +12,13 @@ public class Player : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        
+        rigidbody.AddForce(vector3 * _speed);
     }
     public void SetDirection(Vector3 vector)
     {
-       // rigidbody.velocity = vector3 * _speed;
-
-       rigidbody.AddForce(vector3*_speed);
-        Debug.Log(vector3);
+      // rigidbody.velocity = vector * _speed;
+      vector3 = vector;
+        Debug.Log(vector);
     }
+
 }
