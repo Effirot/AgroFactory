@@ -1,18 +1,52 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class Building : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+public class Building {
+    private enum BuildingStatus {
+        Wait,
+        FindPlace,
+        Build,
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public enum StageMove {
+        Next,
+        Previous,
+    }
+
+    private readonly Dictionary<(BuildingStatus, StageMove), BuildingStatus> _stages;
+
+    private BuildingStatus _stage;
+
+    public Building() {
+        _stages = new() {
+            { (BuildingStatus.Wait, StageMove.Next), BuildingStatus.FindPlace },
+            { (BuildingStatus.FindPlace, StageMove.Next), BuildingStatus.Build },
+            { (BuildingStatus.Build, StageMove.Previous), BuildingStatus.FindPlace },
+        };
+
+        ResetStages();
+    }
+
+    public bool IsFindPlace => _stage is BuildingStatus.FindPlace;
+    public bool CanBuild => _stage is BuildingStatus.Build;
+
+    public void MoveNextBuildStage() {
+        if (_stages.TryGetValue((_stage, StageMove.Next), out var newStage)) {
+            _stage = newStage;
+        }
+    }
+
+    public void MovePreviousBuildStage() {
+        if (_stages.TryGetValue((_stage, StageMove.Previous), out var newStage)) {
+            _stage = newStage;
+        }
+    }
+
+    public void CancelBuild() {
+        ResetStages();
+    }
+
+    public void ResetStages() {
+        _stage = BuildingStatus.Wait;
     }
 }
