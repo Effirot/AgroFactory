@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,11 +21,12 @@ public class Startup : MonoBehaviour {
     private InputAction _leftButtonClick;
     private InputAction _rightButtonClick;
 
+    private Build _build;
+    private List<MapBuild> _builds = new();
+
     private Map _map;
     private PlayerMapInteraction _playerInteraction;
-    private BuildSystem _building;
-
-    private Build _build;
+    private BuildSystem _buildSystem;
 
     private Vector2Int PointOnMap => ToMap(_playerInteraction.Cursor);
 
@@ -38,7 +40,7 @@ public class Startup : MonoBehaviour {
             _maxHeight
         );
         _playerInteraction = new PlayerMapInteraction(_linearDimension);
-        _building = new BuildSystem();
+        _buildSystem = new BuildSystem();
 
         _edge = -_mapSize / 2;
 
@@ -57,29 +59,42 @@ public class Startup : MonoBehaviour {
         _playerInteraction.Update();
         DeformMap(_playerInteraction.Cursor);
 
-        if (_leftButtonClick.WasPressedThisFrame() && _building.IsNeedSelect is false) {
-            _building.MoveNextBuildStage();
+        if (_leftButtonClick.WasPressedThisFrame() && _buildSystem.IsNeedSelect is false) {
+            _buildSystem.MoveNextBuildStage();
         }
 
         if (_rightButtonClick.WasPressedThisFrame()) {
-            _building.CancelBuild();
+            _buildSystem.CancelBuild();
             _selector.Disable();
         }
 
-        if (_building.IsNeedSelect) {
+        if (_buildSystem.IsNeedSelect) {
             _selector.Enadle();
         }
-        if (_building.IsFindPlace) {
-            _map.HighLightCell(PointOnMap, _build.Size);
+
+        if (_build != null) {
+            var point = PointOnMap - _build.Size / 2;
+
+            if (_buildSystem.IsFindPlace) {
+                _map.PrepareCell(point, _build.Size);
+            }
+
+            if (_buildSystem.CanBuild) {
+                if (_map.IsSectorFree(point, _build.Size)) {
+                    var build = Build();
+                    _map.OccupySector(point, _build.Size, build);
+                    _buildSystem.ResetStages();
+                    _build = null;
+                } else {
+                    _buildSystem.MovePreviousBuildStage();
+                }
+            }
         }
 
-        if (_building.CanBuild) {
-            if (_map.IsSectorFree(PointOnMap, _build.Size)) {
-                Build();
-                _map.OccupySector(PointOnMap, _build.Size);
-                _building.ResetStages();
-            } else {
-                _building.MovePreviousBuildStage();
+        if (_buildSystem.Disable) {
+            if (_map.IsOccupy(PointOnMap)) {
+                var build = _map.GetBuild(PointOnMap);
+                _map.HighLightCell(build.PointOnMap, build.Build.Size);
             }
         }
 
@@ -88,7 +103,7 @@ public class Startup : MonoBehaviour {
 
     private void SelectBuild(Build build) {
         _build = build;
-        _building.MoveNextBuildStage();
+        _buildSystem.MoveNextBuildStage();
         _selector.Disable();
     }
 
@@ -96,23 +111,38 @@ public class Startup : MonoBehaviour {
         _map.ChangeShape(ToMap(cursor));
     }
 
-    private void Build() {
-        var position = _playerInteraction.PointOnPlane;
-        var offset = new Vector3(_build.Size.x - 1, 0.0f, _build.Size.y - 1);
-        var scale = new Vector3(_linearDimension, _linearDimension, _linearDimension);
-        position += Vector3.Scale(offset / 2.0f, scale);
+    private MapBuild Build() {
+        var offset = Vector3.zero;
 
-        Instantiate(_build.Model, position, Quaternion.identity, _buildsParrent);
+        if ((_build.Size.x & 1) is 0) {
+            offset.x -= _linearDimension * (_build.Size.x - 1) / 2.0f;
+        }
+
+        if ((_build.Size.y & 1) is 0) {
+            offset.z -= _linearDimension * (_build.Size.y - 1) / 2.0f;
+        }
+
+        var point = _playerInteraction.PointOnPlane + offset;
+        var newBuild = Instantiate(_build.Model, point, Quaternion.identity, _buildsParrent);
+
+        var mapPoint = PointOnMap - _build.Size / 2;
+        var build = new MapBuild(newBuild, _build, mapPoint);
+        _builds.Add(build);
+
+        return build;
     }
 
-    private Cell CreateCell(Vector2 mapCoordinate) {
+    private Cell CreateCell(Vector2Int mapCoordinate) {
         mapCoordinate += _edge;
-
-        var localCoordinate = new Vector3(mapCoordinate.x, 0.0f, mapCoordinate.y);
-        var size = new Vector3(_linearDimension, _linearDimension, _linearDimension);
-        var coordinate = Vector3.Scale(localCoordinate, size);
+        var coordinate = ToWorld(mapCoordinate);
 
         return Instantiate(_cellPattern, coordinate, Quaternion.identity, _mapParent);
+    }
+
+    private Vector3 ToWorld(Vector2Int mapCoordinate) {
+        var localCoordinate = new Vector3(mapCoordinate.x, 0.0f, mapCoordinate.y);
+        var size = new Vector3(_linearDimension, _linearDimension, _linearDimension);
+        return Vector3.Scale(localCoordinate, size);
     }
 
     private Vector2Int ToMap(Vector2 cursor) {
@@ -121,4 +151,22 @@ public class Startup : MonoBehaviour {
 
         return new Vector2Int(mapX, mapY) - _edge;
     }
+}
+
+[System.Serializable]
+public class MapBuild {
+    private GameObject _model;
+    private Build _build;
+    private Vector2Int _pointOnMap;
+
+    public MapBuild(GameObject model, Build build, Vector2Int pointOnMap)
+    {
+        _model = model;
+        _build = build;
+        _pointOnMap = pointOnMap;
+    }
+
+    public GameObject Model => _model;
+    public Build Build => _build;
+    public Vector2Int PointOnMap => _pointOnMap;
 }
