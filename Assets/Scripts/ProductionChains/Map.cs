@@ -25,7 +25,17 @@ public class Map {
 
         for (int x = 0; x < _mapSize.x; x++) {
             for (int y = 0; y < _mapSize.y; y++) {
-                _mapCells[Index(x, y)] = _createCell(new Vector2(x, y));
+                var index = Index(x, y);
+                _mapCells[index] = _createCell(new Vector2(x, y));
+                _mapCells[index].Init();
+            }
+        }
+    }
+
+    public void Update() {
+        for (int x = 0; x < _mapSize.x; x++) {
+            for (int y = 0; y < _mapSize.y; y++) {
+                _mapCells[Index(x, y)].Update();
             }
         }
     }
@@ -45,6 +55,20 @@ public class Map {
         _mapCells[Index(cursorPosition)].Occupy();
     }
 
+    public void HighLightCell(Vector2Int cursorPosition, Vector2Int size) {
+        for (int x = 0; x < size.x; x++) {
+            for (int y = 0; y < size.y; y++) {
+                var point = cursorPosition + new Vector2Int(x, y);
+
+                if (IsOutBound(point)) {
+                    return;
+                }
+
+                _mapCells[Index(point)].Prepare();
+            }
+        }
+    }
+
     public bool IsOccupy(Vector2Int cursorPosition) {
         if (IsOutBound(cursorPosition)) {
             return true;
@@ -59,6 +83,38 @@ public class Map {
         }
 
         return _mapCells[Index(cursorPosition)].IsFree;
+    }
+
+    public bool IsSectorFree(Vector2Int cursorPosition, Vector2Int size) {
+        for (int x = 0; x < size.x; x++) {
+            for (int y = 0; y < size.y; y++) {
+                var point = cursorPosition + new Vector2Int(x, y);
+
+                if (IsOutBound(point)) {
+                    return false;
+                }
+
+                if (_mapCells[Index(point)].IsOccupied) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public void OccupySector(Vector2Int cursorPosition, Vector2Int size) {
+        for (int x = 0; x < size.x; x++) {
+            for (int y = 0; y < size.y; y++) {
+                var point = cursorPosition + new Vector2Int(x, y);
+
+                if (IsOutBound(point)) {
+                    return;
+                }
+
+                _mapCells[Index(point)].Occupy();
+            }
+        }
     }
 
     private void RestoreShape(Vector2Int center) {
@@ -100,9 +156,7 @@ public class Map {
     }
 
     private void RestoreCell(int x, int y) {
-        var rawPosition = _mapCells[Index(x, y)].transform.position;
-        rawPosition.y = 0.0f;
-        _mapCells[Index(x, y)].transform.position = rawPosition;
+        _mapCells[Index(x, y)].Restore();
     }
 
     private void DeformCell(Vector2Int point, float remoteness) {
@@ -110,9 +164,8 @@ public class Map {
     }
 
     private void DeformCell(int x, int y, float remoteness) {
-        var rawPosition = _mapCells[Index(x, y)].transform.position;
-        rawPosition.y = remoteness is not 0.0f ? 1.0f / remoteness * _maxHeight : _maxHeight;
-        _mapCells[Index(x, y)].transform.position = rawPosition;
+        var percentageOfRemoteness = ((float)_radiusOfShapeDeformation - remoteness) / (float)_radiusOfShapeDeformation;
+        _mapCells[Index(x, y)].Deform(percentageOfRemoteness);
     }
 
     private bool IsOutBound(Vector2Int point) {

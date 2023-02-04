@@ -18,11 +18,13 @@ public class Startup : MonoBehaviour {
     private Vector2Int _edge;
     private PlayerInput _input;
     private InputAction _leftButtonClick;
-
-    private Transform _build;
+    private InputAction _rightButtonClick;
 
     private Map _map;
     private PlayerMapInteraction _playerInteraction;
+    private Building _building;
+
+    private Vector2Int PointOnMap => ToMap(_playerInteraction.Cursor);
 
     private void Start() {
         _input = GetComponent<PlayerInput>();
@@ -34,12 +36,14 @@ public class Startup : MonoBehaviour {
             _maxHeight
         );
         _playerInteraction = new PlayerMapInteraction(_linearDimension);
+        _building = new Building();
 
         _edge = -_mapSize / 2;
 
         _map.GenerateMap();
 
         _leftButtonClick = _input.actions.FindAction("LeftButton");
+        _rightButtonClick = _input.actions.FindAction("RightButton");
     }
 
     private void OnDestroy() {
@@ -50,33 +54,43 @@ public class Startup : MonoBehaviour {
         DeformMap(_playerInteraction.Cursor);
 
         if (_leftButtonClick.WasPressedThisFrame()) {
-            Build();
+            _building.MoveNextBuildStage();
         }
 
-        if (_build != null) {
-            _build.gameObject.SetActive(_map.IsFree(ToMap(_playerInteraction.Cursor)));
+        if (_rightButtonClick.WasPressedThisFrame()) {
+            _building.CancelBuild();
         }
 
-        if (_build != null && _map.IsOccupy(ToMap(_playerInteraction.Cursor)) is false) {
-            _build.position = _playerInteraction.PointOnPlane;
+        var size = new Vector2Int(2, 3);
+
+        if (_building.IsFindPlace) {
+            _map.HighLightCell(PointOnMap, size);
         }
+
+        if (_building.CanBuild) {
+            if (_map.IsSectorFree(PointOnMap, size)) {
+                Build(size);
+                _map.OccupySector(PointOnMap, size);
+                _building.ResetStages();
+            } else {
+                _building.MovePreviousBuildStage();
+            }
+        }
+
+        _map.Update();
     }
 
     private void DeformMap(Vector2 cursor) {
         _map.ChangeShape(ToMap(cursor));
     }
 
-    private void Build() {
-        if (_build != null) {
-            if (_map.IsOccupy(ToMap(_playerInteraction.Cursor))) return;
+    private void Build(Vector2Int size) {
+        var position = _playerInteraction.PointOnPlane;
+        var offset = new Vector3(size.x - 1, 0.0f, size.y - 1);
+        var scale = new Vector3(_linearDimension, _linearDimension, _linearDimension);
+        position += Vector3.Scale(offset / 2.0f, scale);
 
-            _map.OccupyCell(ToMap(_playerInteraction.Cursor));
-            _build = null;
-        }
-
-        if (_build != null) return;
-
-        _build = Instantiate(_buildPattern, _buildsParrent).transform;
+        Instantiate(_buildPattern, position, Quaternion.identity, _buildsParrent);
     }
 
     private Cell CreateCell(Vector2 mapCoordinate) {

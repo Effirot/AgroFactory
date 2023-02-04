@@ -29,7 +29,7 @@ public class PlayerMapInteraction {
         var x = GetCoordinate(rawCoordinate.x);
         var z = GetCoordinate(rawCoordinate.z);
 
-        return new Vector3(x, z);
+        return new Vector2(x, z);
     }
 
     private float GetCoordinate(float rawCoordinate) {
