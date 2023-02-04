@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 2cc08a97f8b30d7468b2c6a209160c70
+=======
+guid: 9fc423ffb1acea541a9bd990f35d5b43
+>>>>>>> 05746b7bd54c8567672029c3f38c2c008d509aa1
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
@@ -8,7 +12,11 @@ ModelImporter:
     materialImportMode: 2
     materialName: 0
     materialSearch: 1
+<<<<<<< HEAD
     materialLocation: 1
+=======
+    materialLocation: 0
+>>>>>>> 05746b7bd54c8567672029c3f38c2c008d509aa1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0

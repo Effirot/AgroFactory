@@ -194,15 +194,18 @@ public class MapBuild {
     private GameObject _model;
     private Build _build;
     private Vector2Int _pointOnMap;
+    private Fabric _fabric;
 
     public MapBuild(GameObject model, Build build, Vector2Int pointOnMap)
     {
         _model = model;
         _build = build;
         _pointOnMap = pointOnMap;
+        _fabric = build.Fabric;
     }
 
     public GameObject Model => _model;
     public Build Build => _build;
     public Vector2Int PointOnMap => _pointOnMap;
+    public ref Fabric Fabric => ref _fabric;
 }

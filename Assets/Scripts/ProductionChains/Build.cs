@@ -12,5 +12,6 @@ public class Build : ScriptableObject
     public string Description => _name;
     public Vector2Int Size => _size;
     public GameObject Model => _model;
+    public Fabric Fabric => _factory;
     public Sprite Icon => _icon;
 }
