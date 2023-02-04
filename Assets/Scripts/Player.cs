@@ -37,5 +37,6 @@ public class Player : MonoBehaviour
     public void SetInteract(bool bl)
     {
         _isInteract = bl;
+        Debug.Log(_isInteract);
     }
 }

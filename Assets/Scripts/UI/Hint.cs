@@ -21,6 +21,10 @@ public class Hint : MonoBehaviour
     [SerializeField] private Sprite m_disactiveSprite;
     public bool isActive { get => _isActive; set { _isActive = value; SetHint(); } }
     private bool _isActive = false;
+    private void Start()
+    {
+        isActive = true;
+    }
     public void ToggleHint()
     {
         isActive = !isActive;
