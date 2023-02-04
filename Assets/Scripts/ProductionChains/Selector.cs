@@ -1,15 +1,19 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using TMPro;
 
 public class Selector : MonoBehaviour
 {
     public event Action<Build> OnBuildSelected;
 
+    
     [SerializeField, Range(0.1f, 10.0f)] private float _speedOfOpen;
     [SerializeField] private AnimationCurve _speedCurve;
     [SerializeField] private RectTransform _itemPattern;
     [SerializeField] private RectTransform _itemsParent;
+    [SerializeField] private TMP_Text  _description;
     [SerializeField] private BuildContainer _buildContainer;
     [SerializeField] private float _radius;
 
@@ -32,6 +36,8 @@ public class Selector : MonoBehaviour
             item.localPosition = position;
             item.GetComponent<Image>().sprite = bulid.Icon;
             item.GetComponent<Button>().onClick.AddListener(() => OnBuildSelected?.Invoke(bulid));
+            item.GetComponent<SelectorItem>().OnHover += () => ShowInfo(bulid);
+            item.GetComponent<SelectorItem>().OnExit += () => _description.text = string.Empty;
 
             _items[i] = new Item {
                 Transform = item,
@@ -67,10 +73,15 @@ public class Selector : MonoBehaviour
 
         _itemsParent.gameObject.SetActive(true);
         _progress = 0.0f;
+        _description.text = string.Empty;
     }
 
     public void Disable() {
         _itemsParent.gameObject.SetActive(false);
+    }
+
+    private void ShowInfo(Build build) {
+        _description.text = build.Description;
     }
 }
 

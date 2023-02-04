@@ -16,6 +16,9 @@ public class Startup : MonoBehaviour {
     [SerializeField] private Transform _buildsParrent;
     [SerializeField] private Selector _selector;
 
+    [Header("Создание цепочек")]
+    [SerializeField] private RootGrow _rootPattern;
+
     private Vector2Int _edge;
     private PlayerInput _input;
     private InputAction _leftButtonClick;
@@ -23,10 +26,12 @@ public class Startup : MonoBehaviour {
 
     private Build _build;
     private List<MapBuild> _builds = new();
+    private RootGrow _root;
 
     private Map _map;
     private PlayerMapInteraction _playerInteraction;
     private BuildSystem _buildSystem;
+    private FactoryConnector _connector;
 
     private Vector2Int PointOnMap => ToMap(_playerInteraction.Cursor);
 
@@ -41,6 +46,7 @@ public class Startup : MonoBehaviour {
         );
         _playerInteraction = new PlayerMapInteraction(_linearDimension);
         _buildSystem = new BuildSystem();
+        _connector = new FactoryConnector();
 
         _edge = -_mapSize / 2;
 
@@ -59,45 +65,75 @@ public class Startup : MonoBehaviour {
         _playerInteraction.Update();
         DeformMap(_playerInteraction.Cursor);
 
-        if (_leftButtonClick.WasPressedThisFrame() && _buildSystem.IsNeedSelect is false) {
-            _buildSystem.MoveNextBuildStage();
-        }
+        if (_map.IsOccupy(PointOnMap) && _map.IsInsideBound(PointOnMap) && _connector.Disable && _buildSystem.Disable) {
+            var build = _map.GetBuild(PointOnMap);
+            _map.HighLightCell(build.PointOnMap, build.Build.Size);
 
-        if (_rightButtonClick.WasPressedThisFrame()) {
-            _buildSystem.CancelBuild();
-            _selector.Disable();
-        }
+            if (_leftButtonClick.WasPressedThisFrame()) {
+                if (_root == null) {
+                    _root = Instantiate(_rootPattern);
+                }
 
-        if (_buildSystem.IsNeedSelect) {
-            _selector.Enadle();
-        }
+                _root.gameObject.SetActive(true);
+                _connector.StartConnection(build, _root);
+            }
+        } else if (_connector.Enable && _map.IsInsideBound(PointOnMap)) {
+            _map.HighLightCell(_connector.Build.PointOnMap, _connector.Build.Build.Size);
 
-        if (_build != null) {
-            var point = PointOnMap - _build.Size / 2;
+            var build = _map.GetBuild(PointOnMap);
 
-            if (_buildSystem.IsFindPlace) {
-                _map.PrepareCell(point, _build.Size);
+            if (_map.IsOccupy(PointOnMap) && build != _connector.Build && _connector.IsInRadius) {
+                _map.HighLightCell(build.PointOnMap, build.Build.Size);
+                _connector.LeadConnection(build.Model.transform.position);
+
+                if (_leftButtonClick.WasPressedThisFrame()) {
+                    _connector.Cancel();
+                    
+                    _root = null;
+                }
+            } else {
+                _connector.LeadConnection(_playerInteraction.PointOnPlane);
             }
 
-            if (_buildSystem.CanBuild) {
-                if (_map.IsSectorFree(point, _build.Size)) {
-                    var build = Build();
-                    _map.OccupySector(point, _build.Size, build);
-                    _buildSystem.ResetStages();
-                    _build = null;
-                } else {
-                    _buildSystem.MovePreviousBuildStage();
+            if (_rightButtonClick.WasPressedThisFrame()) {
+                _connector.Cancel();
+                _root.gameObject.SetActive(false);
+            }
+        } else if (_connector.Disable) {
+            if (_leftButtonClick.WasPressedThisFrame() && _buildSystem.IsNeedSelect is false) {
+                _buildSystem.MoveNextBuildStage();
+            }
+
+            if (_rightButtonClick.WasPressedThisFrame()) {
+                _buildSystem.CancelBuild();
+                _selector.Disable();
+            }
+
+            if (_buildSystem.IsNeedSelect) {
+                _selector.Enadle();
+            }
+
+            if (_build != null) {
+                var point = PointOnMap - _build.Size / 2;
+
+                if (_buildSystem.IsFindPlace) {
+                    _map.PrepareCell(point, _build.Size);
+                }
+
+                if (_buildSystem.CanBuild) {
+                    if (_map.IsSectorFree(point, _build.Size)) {
+                        var build = Build();
+                        _map.OccupySector(point, _build.Size, build);
+                        _buildSystem.ResetStages();
+                        _build = null;
+                    } else {
+                        _buildSystem.MovePreviousBuildStage();
+                    }
                 }
             }
         }
 
-        if (_buildSystem.Disable) {
-            if (_map.IsOccupy(PointOnMap)) {
-                var build = _map.GetBuild(PointOnMap);
-                _map.HighLightCell(build.PointOnMap, build.Build.Size);
-            }
-        }
-
+        _connector.Update();
         _map.Update();
     }
 
