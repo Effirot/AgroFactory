@@ -19,4 +19,9 @@ public class PlayerInputReader : MonoBehaviour
         var direction = context.action.triggered;
         if(direction) m_menu.ToggleMenu();
     }
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        var direction = context.action.triggered;
+        m_player.SetInteract(direction);
+    }
 }
