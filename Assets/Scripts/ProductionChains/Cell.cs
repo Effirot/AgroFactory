@@ -34,6 +34,12 @@ public class Cell : MonoBehaviour {
     public void Init(bool isDark) {
         _initHeight = transform.position.y;
 
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, 10.0f, int.MaxValue) is false)
+        {
+            Debug.Log("Did Not Hit");
+            return;
+        }
+
         if (isDark) {
             transform.GetChild(0).gameObject.SetActive(true);
             _renderer = transform.GetChild(0).GetComponent<MeshRenderer>();
@@ -57,6 +63,8 @@ public class Cell : MonoBehaviour {
     }
 
     public void HighLight() {
+        if (_renderer == null) return;
+
         _renderer.material.color = Color.grey;
     }
 
@@ -65,6 +73,8 @@ public class Cell : MonoBehaviour {
     }
 
     public void Prepare() {
+        if (_renderer == null) return;
+
         var color = _status switch {
             OccupationStatus.Free => Color.green,
             OccupationStatus.Occupied => Color.red,
@@ -79,6 +89,8 @@ public class Cell : MonoBehaviour {
     }
 
     public void Restore() {
+        if (_renderer == null) return;
+
         _isDirty = true;
 
         var color = _status switch {
