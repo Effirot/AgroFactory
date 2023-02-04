@@ -27,7 +27,7 @@ public class Map {
             for (int y = 0; y < _mapSize.y; y++) {
                 var index = Index(x, y);
                 _mapCells[index] = _createCell(new Vector2Int(x, y));
-                _mapCells[index].Init();
+                _mapCells[index].Init(((x + y) & 1) is 0);
             }
         }
     }

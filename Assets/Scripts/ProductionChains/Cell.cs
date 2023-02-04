@@ -31,9 +31,16 @@ public class Cell : MonoBehaviour {
 
     public MapBuild Build => _build;
 
-    public void Init() {
+    public void Init(bool isDark) {
         _initHeight = transform.position.y;
-        _renderer = GetComponentInChildren<MeshRenderer>();
+
+        if (isDark) {
+            transform.GetChild(0).gameObject.SetActive(true);
+            _renderer = transform.GetChild(0).GetComponent<MeshRenderer>();
+        } else {
+            transform.GetChild(1).gameObject.SetActive(true);
+            _renderer = transform.GetChild(1).GetComponent<MeshRenderer>();
+        }
     }
 
     public void Update() {
