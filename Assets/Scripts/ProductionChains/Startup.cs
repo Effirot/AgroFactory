@@ -12,8 +12,8 @@ public class Startup : MonoBehaviour {
     [SerializeField] private Transform _mapParent;
 
     [Header("Строительство")]
-    [SerializeField] private GameObject _buildPattern;
     [SerializeField] private Transform _buildsParrent;
+    [SerializeField] private Selector _selector;
 
     private Vector2Int _edge;
     private PlayerInput _input;
@@ -22,7 +22,9 @@ public class Startup : MonoBehaviour {
 
     private Map _map;
     private PlayerMapInteraction _playerInteraction;
-    private Building _building;
+    private BuildSystem _building;
+
+    private Build _build;
 
     private Vector2Int PointOnMap => ToMap(_playerInteraction.Cursor);
 
@@ -36,7 +38,7 @@ public class Startup : MonoBehaviour {
             _maxHeight
         );
         _playerInteraction = new PlayerMapInteraction(_linearDimension);
-        _building = new Building();
+        _building = new BuildSystem();
 
         _edge = -_mapSize / 2;
 
@@ -44,33 +46,37 @@ public class Startup : MonoBehaviour {
 
         _leftButtonClick = _input.actions.FindAction("LeftButton");
         _rightButtonClick = _input.actions.FindAction("RightButton");
+        _selector.OnBuildSelected += SelectBuild;
     }
 
     private void OnDestroy() {
+        _selector.OnBuildSelected -= SelectBuild;
     }
 
     private void Update() {
         _playerInteraction.Update();
         DeformMap(_playerInteraction.Cursor);
 
-        if (_leftButtonClick.WasPressedThisFrame()) {
+        if (_leftButtonClick.WasPressedThisFrame() && _building.IsNeedSelect is false) {
             _building.MoveNextBuildStage();
         }
 
         if (_rightButtonClick.WasPressedThisFrame()) {
             _building.CancelBuild();
+            _selector.Disable();
         }
 
-        var size = new Vector2Int(2, 3);
-
+        if (_building.IsNeedSelect) {
+            _selector.Enadle();
+        }
         if (_building.IsFindPlace) {
-            _map.HighLightCell(PointOnMap, size);
+            _map.HighLightCell(PointOnMap, _build.Size);
         }
 
         if (_building.CanBuild) {
-            if (_map.IsSectorFree(PointOnMap, size)) {
-                Build(size);
-                _map.OccupySector(PointOnMap, size);
+            if (_map.IsSectorFree(PointOnMap, _build.Size)) {
+                Build();
+                _map.OccupySector(PointOnMap, _build.Size);
                 _building.ResetStages();
             } else {
                 _building.MovePreviousBuildStage();
@@ -80,17 +86,23 @@ public class Startup : MonoBehaviour {
         _map.Update();
     }
 
+    private void SelectBuild(Build build) {
+        _build = build;
+        _building.MoveNextBuildStage();
+        _selector.Disable();
+    }
+
     private void DeformMap(Vector2 cursor) {
         _map.ChangeShape(ToMap(cursor));
     }
 
-    private void Build(Vector2Int size) {
+    private void Build() {
         var position = _playerInteraction.PointOnPlane;
-        var offset = new Vector3(size.x - 1, 0.0f, size.y - 1);
+        var offset = new Vector3(_build.Size.x - 1, 0.0f, _build.Size.y - 1);
         var scale = new Vector3(_linearDimension, _linearDimension, _linearDimension);
         position += Vector3.Scale(offset / 2.0f, scale);
 
-        Instantiate(_buildPattern, position, Quaternion.identity, _buildsParrent);
+        Instantiate(_build.Model, position, Quaternion.identity, _buildsParrent);
     }
 
     private Cell CreateCell(Vector2 mapCoordinate) {
