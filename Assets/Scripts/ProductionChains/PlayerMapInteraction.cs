@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class PlayerMapInteraction {
@@ -26,13 +25,13 @@ public class PlayerMapInteraction {
     }
 
     private Vector2 GetMapCoordinate(Vector3 rawCoordinate) {
-        var x = GetCoordinate(rawCoordinate.x);
-        var z = GetCoordinate(rawCoordinate.z);
+        var x = Round(rawCoordinate.x);
+        var z = Round(rawCoordinate.z);
 
         return new Vector2(x, z);
     }
 
-    private float GetCoordinate(float rawCoordinate) {
-        return Mathf.Round(rawCoordinate / _linearDimension) * _linearDimension;
+    private float Round(float rawCoordinate) {
+        return Mathf.RoundToInt(rawCoordinate / _linearDimension) * _linearDimension;
     }
 }

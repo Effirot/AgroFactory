@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class Map {
-    public delegate Cell CreateCell(Vector2 mapCoordinate);
+    public delegate Cell CreateCell(Vector2Int mapCoordinate);
 
     private readonly CreateCell _createCell;
     private readonly Vector2Int _mapSize;
@@ -26,7 +26,7 @@ public class Map {
         for (int x = 0; x < _mapSize.x; x++) {
             for (int y = 0; y < _mapSize.y; y++) {
                 var index = Index(x, y);
-                _mapCells[index] = _createCell(new Vector2(x, y));
+                _mapCells[index] = _createCell(new Vector2Int(x, y));
                 _mapCells[index].Init();
             }
         }
@@ -55,7 +55,7 @@ public class Map {
         _mapCells[Index(cursorPosition)].Occupy();
     }
 
-    public void HighLightCell(Vector2Int cursorPosition, Vector2Int size) {
+    public void PrepareCell(Vector2Int cursorPosition, Vector2Int size) {
         for (int x = 0; x < size.x; x++) {
             for (int y = 0; y < size.y; y++) {
                 var point = cursorPosition + new Vector2Int(x, y);
@@ -67,6 +67,28 @@ public class Map {
                 _mapCells[Index(point)].Prepare();
             }
         }
+    }
+
+    public void HighLightCell(Vector2Int cursorPosition, Vector2Int size) {
+        for (int x = 0; x < size.x; x++) {
+            for (int y = 0; y < size.y; y++) {
+                var point = cursorPosition + new Vector2Int(x, y);
+
+                if (IsOutBound(point)) {
+                    return;
+                }
+
+                _mapCells[Index(point)].HighLight();
+            }
+        }
+    }
+
+    public MapBuild GetBuild(Vector2Int cursorPosition) {
+        if (IsOutBound(cursorPosition)) {
+            return default;
+        }
+
+        return _mapCells[Index(cursorPosition)].Build;
     }
 
     public bool IsOccupy(Vector2Int cursorPosition) {
@@ -103,7 +125,7 @@ public class Map {
         return true;
     }
 
-    public void OccupySector(Vector2Int cursorPosition, Vector2Int size) {
+    public void OccupySector(Vector2Int cursorPosition, Vector2Int size, MapBuild build) {
         for (int x = 0; x < size.x; x++) {
             for (int y = 0; y < size.y; y++) {
                 var point = cursorPosition + new Vector2Int(x, y);
@@ -112,7 +134,10 @@ public class Map {
                     return;
                 }
 
-                _mapCells[Index(point)].Occupy();
+                var index = Index(point);
+
+                _mapCells[index].Occupy();
+                _mapCells[index].SetBuild(build);
             }
         }
     }

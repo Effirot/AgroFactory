@@ -15,6 +15,8 @@ public class Cell : MonoBehaviour {
     [SerializeField, Range(0.1f, 5.0f)] private float _maxHeight;
     [SerializeField, Range(0.1f, 5.0f)] private float _maxHeightDelta;
 
+    private MapBuild _build = null;
+
     private bool _isDirty = false;
     private OccupationStatus _status = OccupationStatus.Free;
     private MeshRenderer _renderer;
@@ -24,6 +26,10 @@ public class Cell : MonoBehaviour {
 
     public bool IsOccupied => _status is OccupationStatus.Occupied;
     public bool IsFree => _status is OccupationStatus.Free;
+    public bool HasBuild => _build != null;
+    public bool HasNoBuild => HasBuild is false;
+
+    public MapBuild Build => _build;
 
     public void Init() {
         _initHeight = transform.position.y;
@@ -43,6 +49,14 @@ public class Cell : MonoBehaviour {
         }
     }
 
+    public void HighLight() {
+        _renderer.material.color = Color.grey;
+    }
+
+    public void SetBuild(MapBuild build) {
+        _build = build;
+    }
+
     public void Prepare() {
         var color = _status switch {
             OccupationStatus.Free => Color.green,
@@ -60,7 +74,12 @@ public class Cell : MonoBehaviour {
     public void Restore() {
         _isDirty = true;
 
-        _renderer.material.color = Color.white;
+        var color = _status switch {
+            OccupationStatus.Occupied => new Color(0.8f, 0.8f, 0.8f, 1.0f),
+            _ => Color.white,
+        };
+
+        _renderer.material.color = color;
 
         _targetHeight = _initHeight;
     }

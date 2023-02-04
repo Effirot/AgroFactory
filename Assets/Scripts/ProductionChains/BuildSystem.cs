@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class BuildSystem {
     private enum BuildingStatus {
-        Wait,
+        Disable,
         SelectFactory,
         FindPlace,
         Build,
@@ -19,7 +19,7 @@ public class BuildSystem {
 
     public BuildSystem() {
         _stages = new() {
-            { (BuildingStatus.Wait, StageMove.Next), BuildingStatus.SelectFactory },
+            { (BuildingStatus.Disable, StageMove.Next), BuildingStatus.SelectFactory },
             { (BuildingStatus.SelectFactory, StageMove.Next), BuildingStatus.FindPlace },
             { (BuildingStatus.FindPlace, StageMove.Next), BuildingStatus.Build },
             { (BuildingStatus.Build, StageMove.Previous), BuildingStatus.FindPlace },
@@ -31,6 +31,7 @@ public class BuildSystem {
     public bool IsNeedSelect => _stage is BuildingStatus.SelectFactory;
     public bool IsFindPlace => _stage is BuildingStatus.FindPlace;
     public bool CanBuild => _stage is BuildingStatus.Build;
+    public bool Disable => _stage is BuildingStatus.Disable;
 
     public void MoveNextBuildStage() {
         if (_stages.TryGetValue((_stage, StageMove.Next), out var newStage)) {
@@ -49,6 +50,6 @@ public class BuildSystem {
     }
 
     public void ResetStages() {
-        _stage = BuildingStatus.Wait;
+        _stage = BuildingStatus.Disable;
     }
 }
