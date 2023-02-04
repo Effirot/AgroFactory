@@ -1,5 +1,3 @@
-using Mono.Cecil;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,17 +7,13 @@ public class FactoryItem : MonoBehaviour
 {
     [SerializeField] public List<ResourceParameters> resourcesToCreateNew;
     public ResourceItem newResource;
-    public static FactoryItem Instance;
-    private void Start()
-    {
-        Instance = this;
-    }
+
     public void CreateNewResource()
     {
         bool GoCreate = false;
         foreach(var resource in resourcesToCreateNew)
         {
-            GoCreate = resource.isComplete;
+            //GoCreate = resource.isComplete;
         }
         if (!GoCreate)
         {
@@ -43,7 +37,7 @@ public class FactoryItem : MonoBehaviour
             return;
         }
 
-        resourceParameters.count++;
+        //resourceParameters.count++;
     }
 
 }

@@ -34,12 +34,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Clip: 0
+    - _Clip: 0.8
     - _Grow: 1
     - _Metalic: 0
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Scale: -1
+    - _Scale: 0.5
     - _Smoothness: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

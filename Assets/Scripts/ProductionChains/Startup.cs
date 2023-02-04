@@ -17,7 +17,7 @@ public class Startup : MonoBehaviour {
     [SerializeField] private Selector _selector;
 
     [Header("Создание цепочек")]
-    [SerializeField] private RootGrow _root;
+    [SerializeField] private RootGrow _rootPattern;
 
     private Vector2Int _edge;
     private PlayerInput _input;
@@ -26,6 +26,7 @@ public class Startup : MonoBehaviour {
 
     private Build _build;
     private List<MapBuild> _builds = new();
+    private RootGrow _root;
 
     private Map _map;
     private PlayerMapInteraction _playerInteraction;
@@ -45,7 +46,7 @@ public class Startup : MonoBehaviour {
         );
         _playerInteraction = new PlayerMapInteraction(_linearDimension);
         _buildSystem = new BuildSystem();
-        _connector = new FactoryConnector(_root);
+        _connector = new FactoryConnector();
 
         _edge = -_mapSize / 2;
 
@@ -64,14 +65,41 @@ public class Startup : MonoBehaviour {
         _playerInteraction.Update();
         DeformMap(_playerInteraction.Cursor);
 
-        if (_map.IsOccupy(PointOnMap) && _map.IsInsideBound(PointOnMap)) {
+        if (_map.IsOccupy(PointOnMap) && _map.IsInsideBound(PointOnMap) && _connector.Disable && _buildSystem.Disable) {
             var build = _map.GetBuild(PointOnMap);
             _map.HighLightCell(build.PointOnMap, build.Build.Size);
 
             if (_leftButtonClick.WasPressedThisFrame()) {
-                
+                if (_root == null) {
+                    _root = Instantiate(_rootPattern);
+                }
+
+                _root.gameObject.SetActive(true);
+                _connector.StartConnection(build, _root);
             }
-        } else {
+        } else if (_connector.Enable && _map.IsInsideBound(PointOnMap)) {
+            _map.HighLightCell(_connector.Build.PointOnMap, _connector.Build.Build.Size);
+
+            var build = _map.GetBuild(PointOnMap);
+
+            if (_map.IsOccupy(PointOnMap) && build != _connector.Build && _connector.IsInRadius) {
+                _map.HighLightCell(build.PointOnMap, build.Build.Size);
+                _connector.LeadConnection(build.Model.transform.position);
+
+                if (_leftButtonClick.WasPressedThisFrame()) {
+                    _connector.Cancel();
+                    
+                    _root = null;
+                }
+            } else {
+                _connector.LeadConnection(_playerInteraction.PointOnPlane);
+            }
+
+            if (_rightButtonClick.WasPressedThisFrame()) {
+                _connector.Cancel();
+                _root.gameObject.SetActive(false);
+            }
+        } else if (_connector.Disable) {
             if (_leftButtonClick.WasPressedThisFrame() && _buildSystem.IsNeedSelect is false) {
                 _buildSystem.MoveNextBuildStage();
             }
@@ -105,6 +133,7 @@ public class Startup : MonoBehaviour {
             }
         }
 
+        _connector.Update();
         _map.Update();
     }
 
