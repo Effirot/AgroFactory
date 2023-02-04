@@ -15,6 +15,10 @@ public class Hint : MonoBehaviour
     [Header("Animation parameters")]
     [SerializeField] private float time = 0.5f;
     [SerializeField] private float shag = 0.01f;
+    [Space]
+    [SerializeField] private Image m_toggleImage;
+    [SerializeField] private Sprite m_activeSprite;
+    [SerializeField] private Sprite m_disactiveSprite;
     public bool isActive { get => _isActive; set { _isActive = value; SetHint(); } }
     private bool _isActive = false;
     public void ToggleHint()
@@ -31,11 +35,13 @@ public class Hint : MonoBehaviour
         m_tmpText.text = "";
         if (isActive)
         {
+            m_toggleImage.sprite = m_activeSprite;
             StartCoroutine(TextAnim(true));
             m_Hint.SetActive(false);
         }
         else
         {
+            m_toggleImage.sprite = m_disactiveSprite;
             StartCoroutine(TextAnim(false));
         }
     }
