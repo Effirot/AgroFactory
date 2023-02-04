@@ -138,11 +138,13 @@ public class Startup : MonoBehaviour {
                 }
             }
         }
+        
+        foreach (var build in _builds) { 
+            build.Fabric.Update(Time.deltaTime);
+        }
 
         if (_time >= _deltaTime) {
             foreach (var build in _builds) {
-                build.Fabric.Update(Time.deltaTime);
-                
                 foreach (var next in build.Next) {
                     if (build.Fabric.HasResource) {
                         next.Fabric.Input(build.Fabric.GetOne());
@@ -155,6 +157,8 @@ public class Startup : MonoBehaviour {
 
         _connector.Update();
         _map.Update();
+
+        _time += Time.deltaTime;
     }
 
     private void SelectBuild(Build build) {
