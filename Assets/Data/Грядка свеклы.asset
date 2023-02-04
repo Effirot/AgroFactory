@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: "\u0413\u0440\u044F\u0434\u043A\u0430 \u0441\u0432\u0435\u043A\u043B\u044B"
   m_EditorClassIdentifier: 
   _name: "\u0413\u0440\u044F\u0434\u043A\u0430 \u0441\u0432\u0435\u043A\u043B\u044B"
-  _size: {x: 2, y: 2}
-  _model: {fileID: 919132149155446097, guid: 6942c6c73f86e0f49836538c327846c4, type: 3}
+  _size: {x: 3, y: 3}
+  _model: {fileID: 2748978039119210334, guid: 34dd7cfd3fc41dc49af8064b8e22eb21, type: 3}
   _factory:
     _inputs: []
     _output:
       Type: 3
       Count: 0
+      Current: 0
+    _time: 1
+    _isSourse: 1
   _icon: {fileID: -1944154361, guid: cf5423885c39f1046a9b403dab5e665c, type: 3}

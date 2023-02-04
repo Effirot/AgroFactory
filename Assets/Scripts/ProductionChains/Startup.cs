@@ -17,6 +17,7 @@ public class Startup : MonoBehaviour {
     [SerializeField] private Selector _selector;
 
     [Header("Создание цепочек")]
+    [SerializeField] private float _deltaTime;
     [SerializeField] private RootGrow _rootPattern;
 
     private Vector2Int _edge;
@@ -27,6 +28,7 @@ public class Startup : MonoBehaviour {
     private Build _build;
     private List<MapBuild> _builds = new();
     private RootGrow _root;
+    private float _time;
 
     private Map _map;
     private PlayerMapInteraction _playerInteraction;
@@ -82,14 +84,18 @@ public class Startup : MonoBehaviour {
 
             var build = _map.GetBuild(PointOnMap);
 
-            if (_map.IsOccupy(PointOnMap) && build != _connector.Build && _connector.IsInRadius) {
-                _map.HighLightCell(build.PointOnMap, build.Build.Size);
+            if (_map.IsOccupy(PointOnMap) && build != _connector.Build) {
                 _connector.LeadConnection(build.Model.transform.position);
 
-                if (_leftButtonClick.WasPressedThisFrame()) {
-                    _connector.Cancel();
-                    
-                    _root = null;
+                if (_connector.IsInRadius && build.Fabric.CanConnect(inputFabric: _connector.Build.Fabric)) {
+                    _map.HighLightCell(build.PointOnMap, build.Build.Size);
+
+                    if (_leftButtonClick.WasPressedThisFrame()) {
+                        _connector.Cancel();
+                        _connector.Build.Next.Add(build);
+
+                        _root = null;
+                    }
                 }
             } else {
                 _connector.LeadConnection(_playerInteraction.PointOnPlane);
@@ -131,6 +137,20 @@ public class Startup : MonoBehaviour {
                     }
                 }
             }
+        }
+
+        if (_time >= _deltaTime) {
+            foreach (var build in _builds) {
+                build.Fabric.Update(Time.deltaTime);
+                
+                foreach (var next in build.Next) {
+                    if (build.Fabric.HasResource) {
+                        next.Fabric.Input(build.Fabric.GetOne());
+                    }
+                }
+            }
+
+            _time = 0.0f;
         }
 
         _connector.Update();
@@ -196,12 +216,16 @@ public class MapBuild {
     private Vector2Int _pointOnMap;
     private Fabric _fabric;
 
+    public List<MapBuild> Next = new();
+
     public MapBuild(GameObject model, Build build, Vector2Int pointOnMap)
     {
         _model = model;
         _build = build;
         _pointOnMap = pointOnMap;
-        _fabric = build.Fabric;
+        _fabric = build.Fabric.Clone();
+        
+        _fabric.Init();
     }
 
     public GameObject Model => _model;
