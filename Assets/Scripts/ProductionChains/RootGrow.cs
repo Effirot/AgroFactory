@@ -7,7 +7,7 @@ public class RootGrow : MonoBehaviour
     [SerializeField, Range(1.0f, 5.0f)] private float _timeToGrow = 5.0f;
     [SerializeField, Range(0.0f, 1.0f)] private float _minGrow = 0.2f;
     [SerializeField, Range(0.0f, 1.0f)] private float _maxGrow = 0.97f;
-    [SerializeField, Range(1.0f, 10.0f)] private float _maxLength = 1.0f;
+    [SerializeField, Range(1.0f, 15.0f)] private float _maxLength = 1.0f;
 
     private List<Material> _growRootMaterials = new();
     private bool _isFullyGrown;
