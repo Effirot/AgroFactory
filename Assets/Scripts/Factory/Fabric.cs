@@ -5,9 +5,11 @@ using UnityEngine;
 public struct Fabric
 {
     [SerializeField] private Resource[] _inputs;
-    [SerializeField] private Resources _output;
+    [SerializeField] private Resource _output;
 
-    public bool CanConnect(Resources resource) {
+    public bool IsSourse => _inputs.Any() is false;
+
+    public bool CanConnect(ResourceType resource) {
         return _inputs
             .Select(input => input.Type)
             .Contains(resource);
@@ -16,14 +18,15 @@ public struct Fabric
 
 [System.Serializable]
 public struct Resource {
-    public Resources Type;
+    public ResourceType Type;
     public int Count;
 }
 
-public enum Resources {
+public enum ResourceType {
     Water,
     Minerals,
     Starch,
     Sugar,
     АТР,
+    Keratin,
 }
