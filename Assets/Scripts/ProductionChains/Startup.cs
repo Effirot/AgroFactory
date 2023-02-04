@@ -16,6 +16,9 @@ public class Startup : MonoBehaviour {
     [SerializeField] private Transform _buildsParrent;
     [SerializeField] private Selector _selector;
 
+    [Header("Создание цепочек")]
+    [SerializeField] private RootGrow _root;
+
     private Vector2Int _edge;
     private PlayerInput _input;
     private InputAction _leftButtonClick;
@@ -27,6 +30,7 @@ public class Startup : MonoBehaviour {
     private Map _map;
     private PlayerMapInteraction _playerInteraction;
     private BuildSystem _buildSystem;
+    private FactoryConnector _connector;
 
     private Vector2Int PointOnMap => ToMap(_playerInteraction.Cursor);
 
@@ -41,6 +45,7 @@ public class Startup : MonoBehaviour {
         );
         _playerInteraction = new PlayerMapInteraction(_linearDimension);
         _buildSystem = new BuildSystem();
+        _connector = new FactoryConnector(_root);
 
         _edge = -_mapSize / 2;
 
@@ -59,42 +64,44 @@ public class Startup : MonoBehaviour {
         _playerInteraction.Update();
         DeformMap(_playerInteraction.Cursor);
 
-        if (_leftButtonClick.WasPressedThisFrame() && _buildSystem.IsNeedSelect is false) {
-            _buildSystem.MoveNextBuildStage();
-        }
+        if (_map.IsOccupy(PointOnMap) && _map.IsInsideBound(PointOnMap)) {
+            var build = _map.GetBuild(PointOnMap);
+            _map.HighLightCell(build.PointOnMap, build.Build.Size);
 
-        if (_rightButtonClick.WasPressedThisFrame()) {
-            _buildSystem.CancelBuild();
-            _selector.Disable();
-        }
-
-        if (_buildSystem.IsNeedSelect) {
-            _selector.Enadle();
-        }
-
-        if (_build != null) {
-            var point = PointOnMap - _build.Size / 2;
-
-            if (_buildSystem.IsFindPlace) {
-                _map.PrepareCell(point, _build.Size);
+            if (_leftButtonClick.WasPressedThisFrame()) {
+                
+            }
+        } else {
+            if (_leftButtonClick.WasPressedThisFrame() && _buildSystem.IsNeedSelect is false) {
+                _buildSystem.MoveNextBuildStage();
             }
 
-            if (_buildSystem.CanBuild) {
-                if (_map.IsSectorFree(point, _build.Size)) {
-                    var build = Build();
-                    _map.OccupySector(point, _build.Size, build);
-                    _buildSystem.ResetStages();
-                    _build = null;
-                } else {
-                    _buildSystem.MovePreviousBuildStage();
+            if (_rightButtonClick.WasPressedThisFrame()) {
+                _buildSystem.CancelBuild();
+                _selector.Disable();
+            }
+
+            if (_buildSystem.IsNeedSelect) {
+                _selector.Enadle();
+            }
+
+            if (_build != null) {
+                var point = PointOnMap - _build.Size / 2;
+
+                if (_buildSystem.IsFindPlace) {
+                    _map.PrepareCell(point, _build.Size);
                 }
-            }
-        }
 
-        if (_buildSystem.Disable) {
-            if (_map.IsOccupy(PointOnMap)) {
-                var build = _map.GetBuild(PointOnMap);
-                _map.HighLightCell(build.PointOnMap, build.Build.Size);
+                if (_buildSystem.CanBuild) {
+                    if (_map.IsSectorFree(point, _build.Size)) {
+                        var build = Build();
+                        _map.OccupySector(point, _build.Size, build);
+                        _buildSystem.ResetStages();
+                        _build = null;
+                    } else {
+                        _buildSystem.MovePreviousBuildStage();
+                    }
+                }
             }
         }
 

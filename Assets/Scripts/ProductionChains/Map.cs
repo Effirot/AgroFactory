@@ -142,6 +142,16 @@ public class Map {
         }
     }
 
+    public bool IsInsideBound(Vector2Int point) {
+        return IsInsideBound(point.x, point.y);
+    }
+
+    public bool IsInsideBound(int x, int y) {
+        var insideOfX = 0 <= x && x < _mapSize.x;
+        var insideOfY = 0 <= y && y < _mapSize.y;
+        return insideOfX && insideOfY;
+    }
+
     private void RestoreShape(Vector2Int center) {
         for (int x = -_radiusOfShapeDeformation; x <= _radiusOfShapeDeformation; x++) {
             for (int y = -_radiusOfShapeDeformation; y <= _radiusOfShapeDeformation; y++) {

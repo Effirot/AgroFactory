@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader Graphs_SHA_GrowRoot
+  m_Name: MAT_GrowRoot
   m_Shader: {fileID: -6465566751694194690, guid: d158b7b6b379b5746b63efb2b978630d, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -34,13 +34,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Clip: 0
+    - _Grow: 1
     - _Metalic: 0
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _Scale: -1
     - _Smoothness: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Scale: {r: 0, g: 1, b: 0, a: 0}
     - _Vector3: {r: 0, g: 0, b: 0, a: 0}
+    - _scale: {r: 0, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &2534465379722344967
 MonoBehaviour:
