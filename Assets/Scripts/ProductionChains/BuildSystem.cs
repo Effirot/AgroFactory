@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 
-public class Building {
+public class BuildSystem {
     private enum BuildingStatus {
         Wait,
+        SelectFactory,
         FindPlace,
         Build,
     }
@@ -17,9 +17,10 @@ public class Building {
 
     private BuildingStatus _stage;
 
-    public Building() {
+    public BuildSystem() {
         _stages = new() {
-            { (BuildingStatus.Wait, StageMove.Next), BuildingStatus.FindPlace },
+            { (BuildingStatus.Wait, StageMove.Next), BuildingStatus.SelectFactory },
+            { (BuildingStatus.SelectFactory, StageMove.Next), BuildingStatus.FindPlace },
             { (BuildingStatus.FindPlace, StageMove.Next), BuildingStatus.Build },
             { (BuildingStatus.Build, StageMove.Previous), BuildingStatus.FindPlace },
         };
@@ -27,6 +28,7 @@ public class Building {
         ResetStages();
     }
 
+    public bool IsNeedSelect => _stage is BuildingStatus.SelectFactory;
     public bool IsFindPlace => _stage is BuildingStatus.FindPlace;
     public bool CanBuild => _stage is BuildingStatus.Build;
 
