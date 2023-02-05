@@ -15,6 +15,7 @@ public struct Fabric
     public bool HasResource => _output.Current > _output.Count;
 
     public ResourceType Type => _output.Type;
+    public Resource Output => _output;
 
     public Resource[] GetResorces()
     {
