@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using System.Collections;
 
 public class Selector : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class Selector : MonoBehaviour
     [SerializeField] private RectTransform _itemPattern;
     [SerializeField] private RectTransform _itemsParent;
     [SerializeField] private TMP_Text  _description;
+    [SerializeField] private TMP_Text _fullDescription;
+    [SerializeField] private GameObject M_Image;
     [SerializeField] private BuildContainer _buildContainer;
     [SerializeField] private float _radius;
 
@@ -82,6 +85,30 @@ public class Selector : MonoBehaviour
 
     private void ShowInfo(Build build) {
         _description.text = build.Description;
+        if (build == null) return;
+        string str = GetString(build.Fabric.GetResorces());
+        if (string.IsNullOrEmpty(str)) return;
+        _fullDescription.text = build.Description +"\n" + GetString(build.Fabric.GetResorces());
+        StartCoroutine(SetImage());
+    }
+    private string GetString(Resource[] resoure)
+    {
+        string str = "";
+        if (resoure.Length == 0) return "Пусто \n";
+        foreach(Resource res in resoure)
+        {
+            str += $"Ресурс: {res.Type}" + "\n" + $"Необходимо: {res.Count}" + "\n" + "\n";
+        }
+        return str;
+    }
+    private IEnumerator SetImage()
+    {
+        _fullDescription.gameObject.SetActive(false);
+        M_Image.SetActive(false);
+        yield return new WaitForSeconds(0.05f);
+        M_Image.SetActive(true);
+        yield return new WaitForSeconds(0.05f);
+        _fullDescription.gameObject.SetActive(true);
     }
 }
 

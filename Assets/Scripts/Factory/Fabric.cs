@@ -14,6 +14,13 @@ public struct Fabric
 
     public bool HasResource => _output.Current > _output.Count;
 
+    public ResourceType Type => _output.Type;
+
+    public Resource[] GetResorces()
+    {
+        return _inputs;
+    }
+
     public void Init() {
         
     }
@@ -87,7 +94,7 @@ public struct Resource {
     public ResourceType Type;
     public int Count;
     public int Current;
-
+    
     public bool CanOutput => Current > Count;
     public int Output => Current % Count;
 

@@ -50,7 +50,7 @@ MonoBehaviour:
   _timeToGrow: 5
   _minGrow: 0.04
   _maxGrow: 0.8
-  _maxLength: 10
+  _maxLength: 11
 --- !u!1 &7436337480227659343
 GameObject:
   m_ObjectHideFlags: 0
