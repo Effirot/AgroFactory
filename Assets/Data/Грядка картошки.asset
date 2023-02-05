@@ -21,6 +21,6 @@ MonoBehaviour:
       Type: 2
       Count: 0
       Current: 0
-    _time: 1
+    _time: 0.4
     _isSourse: 1
   _icon: {fileID: -2115922722, guid: cf5423885c39f1046a9b403dab5e665c, type: 3}

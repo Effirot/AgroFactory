@@ -75,7 +75,7 @@ public class Startup : MonoBehaviour {
             if (build is not null) {
                 _map.HighLightCell(build.PointOnMap, build.Build.Size);
                 _factoryInformation.Enable();
-                _factoryInformation.SetInfo(build.Fabric.GetResorces());
+                _factoryInformation.SetInfo(build.Fabric.GetResorces(), build.Fabric.Output);
 
                 if (_leftButtonClick.WasPressedThisFrame()) {
                     if (_root == null) {
@@ -97,7 +97,7 @@ public class Startup : MonoBehaviour {
                     if (_connector.IsInRadius && build.Fabric.CanConnect(inputFabric: _connector.Build.Fabric)) {
                         _map.HighLightCell(build.PointOnMap, build.Build.Size);
                         _factoryInformation.Enable();
-                        _factoryInformation.SetInfo(build.Fabric.GetResorces());
+                        _factoryInformation.SetInfo(build.Fabric.GetResorces(), build.Fabric.Output);
 
                         if (_leftButtonClick.WasPressedThisFrame()) {
                             _connector.Cancel();
