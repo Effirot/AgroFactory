@@ -20,6 +20,7 @@ public class Startup : MonoBehaviour {
     [SerializeField] private float _deltaTime;
     [SerializeField] private RootGrow _rootPattern;
     [SerializeField] private Stump _stump;
+    [SerializeField] private FactoryInformator _factoryInformation;
 
     private Vector2Int _edge;
     private PlayerInput _input;
@@ -73,6 +74,8 @@ public class Startup : MonoBehaviour {
 
             if (build is not null) {
                 _map.HighLightCell(build.PointOnMap, build.Build.Size);
+                _factoryInformation.Enable();
+                _factoryInformation.SetInfo(build.Fabric.GetResorces());
 
                 if (_leftButtonClick.WasPressedThisFrame()) {
                     if (_root == null) {
@@ -85,6 +88,8 @@ public class Startup : MonoBehaviour {
             }
         } else if (_connector.Enable && _map.IsInsideBound(PointOnMap)) {
             _map.HighLightCell(_connector.Build.PointOnMap, _connector.Build.Build.Size);
+            _factoryInformation.Enable();
+            _factoryInformation.SetInfo(_connector.Build.Fabric.GetResorces());
 
             var build = _map.GetBuild(PointOnMap);
 
@@ -94,6 +99,8 @@ public class Startup : MonoBehaviour {
 
                     if (_connector.IsInRadius && build.Fabric.CanConnect(inputFabric: _connector.Build.Fabric)) {
                         _map.HighLightCell(build.PointOnMap, build.Build.Size);
+                        _factoryInformation.Enable();
+                        _factoryInformation.SetInfo(build.Build.Fabric.GetResorces());
 
                         if (_leftButtonClick.WasPressedThisFrame()) {
                             _connector.Cancel();
@@ -146,6 +153,7 @@ public class Startup : MonoBehaviour {
 
                 if (_buildSystem.IsFindPlace) {
                     _map.PrepareCell(point, _build.Size);
+                    _factoryInformation.Disable();
                 }
 
                 if (_buildSystem.CanBuild) {
