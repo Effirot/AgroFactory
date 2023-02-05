@@ -5,6 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class UIMenu : MonoBehaviour
 {
+    private void Start()
+    {
+        Time.timeScale = 1;
+    }
     public void ReloadActiveScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
