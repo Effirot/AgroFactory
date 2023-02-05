@@ -18,7 +18,6 @@ public class PauseMenu : MonoBehaviour
     }
     public void GameOver(Slider value)
     {
-        Debug.Log(value.value);
         if(value.value != 0) return;
         isPause = true;
         if (!isPause) Time.timeScale = 1;
