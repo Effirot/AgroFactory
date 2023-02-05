@@ -25,7 +25,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 85375
+  controlID: -1
 --- !u!114 &2
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 200}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 85376
+  controlID: -1
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -450,9 +450,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -5.347112, y: -6.784409, z: 3.9691029}
+    m_Target: {x: -4.196356, y: 3.4307156, z: 4.8341985}
     speed: 2
-    m_Value: {x: -5.347112, y: -6.784409, z: 3.9691029}
+    m_Value: {x: -4.196356, y: 3.4307156, z: 4.8341985}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -499,13 +499,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.33947745, y: 0.089267015, z: -0.03238283, w: 0.93580925}
+    m_Target: {x: 0.10394438, y: 0.61473334, z: -0.08218118, w: 0.77752566}
     speed: 2
-    m_Value: {x: 0.33947724, y: 0.08926696, z: -0.032382812, w: 0.9358087}
+    m_Value: {x: 0.10394431, y: 0.6147329, z: -0.08218112, w: 0.7775251}
   m_Size:
-    m_Target: 10.520076
+    m_Target: 0.8660254
     speed: 2
-    m_Value: 10.520076
+    m_Value: 0.8660254
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1556,8 +1556,6 @@ MonoBehaviour:
   m_ObjectsLockedBeforeSerialization:
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   m_InstanceIDsLockedBeforeSerialization: ec5bebff
   m_PreviewResizer:
     m_CachedPref: -319
@@ -1734,7 +1732,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 200}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 85393
+  controlID: 99195
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1792,9 +1790,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 2ad20000
-      m_LastClickedID: 0
-      m_ExpandedIDs: d601c8ff0ce6d4ff12e6d4ff2c02d5ff528ee5ffea5bebff8897f9ff96a6f9ff846cfbff906cfbff3272fbffe276fbff80f7ffff18f8ffff20f8ffffb4f8ffffb6f8fffff2f8ffff0afbffff267900002a7900004a790000b0790000be79000018920000289200003e9200004e9200008c920000
+      m_SelectedIDs: ce46bfff
+      m_LastClickedID: -4241714
+      m_ExpandedIDs: ce46bfff9c49bfffd601c8ff0ce6d4ff12e6d4ff2c02d5ff8897f9ff96a6f9ff846cfbff906cfbff3272fbffe276fbff80f7ffff04f8ffff18f8ffff20f8ffffb4f8ffffb6f8fffff2f8ffff0afbffff267900004a790000b0790000be79000018920000289200003e9200004e9200008c920000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1886,21 +1884,21 @@ MonoBehaviour:
     m_SkipHidden: 1
     m_SearchArea: 1
     m_Folders:
-    - Assets/Resources
+    - Assets/Prefabs
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Resources
+  - Assets/Prefabs
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\galiu\unity projects\AgroFactory
   m_LockTracker:
     m_IsLocked: 1
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: ae780000
-    m_LastClickedID: 30894
+    m_SelectedIDs: ac780000
+    m_LastClickedID: 30892
     m_ExpandedIDs: 0000000090780000927800009478000096780000987800009a7800009c78000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1954,24 +1952,24 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 2ad20000
-    m_LastClickedInstanceID: 53802
+    m_SelectedInstanceIDs: ce46bfff
+    m_LastClickedInstanceID: -4241714
     m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c623000000000000468000006686000020d40000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: Root
-      m_OriginalName: Root
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 29884
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 13}
     m_CreateAssetUtility:
@@ -2070,7 +2068,7 @@ MonoBehaviour:
   m_ObjectsLockedBeforeSerialization: []
   m_InstanceIDsLockedBeforeSerialization: 
   m_PreviewResizer:
-    m_CachedPref: 381
+    m_CachedPref: -381
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1

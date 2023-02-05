@@ -50,7 +50,7 @@ MonoBehaviour:
   _timeToGrow: 5
   _minGrow: 0.04
   _maxGrow: 0.8
-  _maxLength: 11
+  _maxLength: 20
 --- !u!1001 &3548585965015126529
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -68,11 +68,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: be51d0fe4dd6ea546a7211021bdf6b33, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: be51d0fe4dd6ea546a7211021bdf6b33, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: be51d0fe4dd6ea546a7211021bdf6b33, type: 3}
       propertyPath: m_LocalRotation.w

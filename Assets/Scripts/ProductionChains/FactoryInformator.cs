@@ -20,7 +20,7 @@ public class FactoryInformator : MonoBehaviour
             var item = transform.GetChild(i) as RectTransform;
             var offset = Vector3.left * _offset * i;
             
-            _items[_items.Length - 1 - i] = new InfoItem {
+            _items[i] = new InfoItem {
                 Transform = item,
                 Min = new Vector3(_min, item.localPosition.y, item.localPosition.z) + offset,
                 Max = new Vector3(_max, item.localPosition.y, item.localPosition.z),
@@ -52,16 +52,22 @@ public class FactoryInformator : MonoBehaviour
         GetComponent<Image>().enabled = false;
     }
 
-    public void SetInfo(Resource[] resources) {
-        for (int i = 0; i < _items.Length; i++) {
-           if (i >= resources.Length) {
+    public void SetInfo(Resource[] resources, Resource output) {
+        _items[0].Transform.gameObject.SetActive(true);
+        _items[0].Transform.GetChild(0).GetComponent<Image>().sprite = _presenter.Single(presenter => presenter.Type == output.Type).Image;
+        _items[0].Transform.GetChild(1).GetComponent<TMPro.TMP_Text>().text = output.Current.ToString();
+
+        for (int i = 1; i < _items.Length; i++) {
+           if (i - 1 >= resources.Length) {
                 _items[i].Transform.gameObject.SetActive(false);
 
                 continue;
            }
 
-           _items[i].Transform.GetChild(0).GetComponent<Image>().sprite = _presenter.Single(presenter => presenter.Type == resources[i].Type).Image;
-           _items[i].Transform.GetChild(1).GetComponent<TMPro.TMP_Text>().text = resources[i].Current.ToString();
+           _items[i].Transform.gameObject.SetActive(true);
+
+           _items[i].Transform.GetChild(0).GetComponent<Image>().sprite = _presenter.Single(presenter => presenter.Type == resources[i - 1].Type).Image;
+           _items[i].Transform.GetChild(1).GetComponent<TMPro.TMP_Text>().text = resources[i - 1].Current.ToString();
         }
     }
 

@@ -75,7 +75,7 @@ public class Startup : MonoBehaviour {
             if (build is not null) {
                 _map.HighLightCell(build.PointOnMap, build.Build.Size);
                 _factoryInformation.Enable();
-                _factoryInformation.SetInfo(build.Fabric.GetResorces());
+                _factoryInformation.SetInfo(build.Fabric.GetResorces(), build.Fabric.Output);
 
                 if (_leftButtonClick.WasPressedThisFrame()) {
                     if (_root == null) {
@@ -88,9 +88,6 @@ public class Startup : MonoBehaviour {
             }
         } else if (_connector.Enable && _map.IsInsideBound(PointOnMap)) {
             _map.HighLightCell(_connector.Build.PointOnMap, _connector.Build.Build.Size);
-            _factoryInformation.Enable();
-            _factoryInformation.SetInfo(_connector.Build.Fabric.GetResorces());
-
             var build = _map.GetBuild(PointOnMap);
 
             if (build is not null) {
@@ -100,7 +97,7 @@ public class Startup : MonoBehaviour {
                     if (_connector.IsInRadius && build.Fabric.CanConnect(inputFabric: _connector.Build.Fabric)) {
                         _map.HighLightCell(build.PointOnMap, build.Build.Size);
                         _factoryInformation.Enable();
-                        _factoryInformation.SetInfo(build.Build.Fabric.GetResorces());
+                        _factoryInformation.SetInfo(build.Fabric.GetResorces(), build.Fabric.Output);
 
                         if (_leftButtonClick.WasPressedThisFrame()) {
                             _connector.Cancel();
@@ -111,6 +108,7 @@ public class Startup : MonoBehaviour {
                     }
                 }
             } else {
+                _factoryInformation.Disable();
                 if (_stump.IsCursorInside(_playerInteraction.PointOnPlane)) {
                     _connector.LeadConnection(_stump.Center);
 
@@ -135,6 +133,8 @@ public class Startup : MonoBehaviour {
                 _root.gameObject.SetActive(false);
             }
         } else if (_connector.Disable) {
+            _factoryInformation.Disable();
+
             if (_leftButtonClick.WasPressedThisFrame() && _buildSystem.IsNeedSelect is false) {
                 _buildSystem.MoveNextBuildStage();
             }
@@ -153,7 +153,6 @@ public class Startup : MonoBehaviour {
 
                 if (_buildSystem.IsFindPlace) {
                     _map.PrepareCell(point, _build.Size);
-                    _factoryInformation.Disable();
                 }
 
                 if (_buildSystem.CanBuild) {
