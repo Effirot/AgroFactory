@@ -19,6 +19,7 @@ public class Startup : MonoBehaviour {
     [Header("Создание цепочек")]
     [SerializeField] private float _deltaTime;
     [SerializeField] private RootGrow _rootPattern;
+    [SerializeField] private Stump _stump;
 
     private Vector2Int _edge;
     private PlayerInput _input;
@@ -69,36 +70,57 @@ public class Startup : MonoBehaviour {
 
         if (_map.IsOccupy(PointOnMap) && _map.IsInsideBound(PointOnMap) && _connector.Disable && _buildSystem.Disable) {
             var build = _map.GetBuild(PointOnMap);
-            _map.HighLightCell(build.PointOnMap, build.Build.Size);
 
-            if (_leftButtonClick.WasPressedThisFrame()) {
-                if (_root == null) {
-                    _root = Instantiate(_rootPattern);
+            if (build is not null) {
+                _map.HighLightCell(build.PointOnMap, build.Build.Size);
+
+                if (_leftButtonClick.WasPressedThisFrame()) {
+                    if (_root == null) {
+                        _root = Instantiate(_rootPattern);
+                    }
+
+                    _root.gameObject.SetActive(true);
+                    _connector.StartConnection(build, _root);
                 }
-
-                _root.gameObject.SetActive(true);
-                _connector.StartConnection(build, _root);
             }
         } else if (_connector.Enable && _map.IsInsideBound(PointOnMap)) {
             _map.HighLightCell(_connector.Build.PointOnMap, _connector.Build.Build.Size);
 
             var build = _map.GetBuild(PointOnMap);
 
-            if (_map.IsOccupy(PointOnMap) && build != _connector.Build) {
-                _connector.LeadConnection(build.Model.transform.position);
+            if (build is not null) {
+                if (_map.IsOccupy(PointOnMap) && build != _connector.Build) {
+                    _connector.LeadConnection(build.Model.transform.position);
 
-                if (_connector.IsInRadius && build.Fabric.CanConnect(inputFabric: _connector.Build.Fabric)) {
-                    _map.HighLightCell(build.PointOnMap, build.Build.Size);
+                    if (_connector.IsInRadius && build.Fabric.CanConnect(inputFabric: _connector.Build.Fabric)) {
+                        _map.HighLightCell(build.PointOnMap, build.Build.Size);
 
-                    if (_leftButtonClick.WasPressedThisFrame()) {
-                        _connector.Cancel();
-                        _connector.Build.Next.Add(build);
+                        if (_leftButtonClick.WasPressedThisFrame()) {
+                            _connector.Cancel();
+                            _connector.Build.Next.Add(build);
 
-                        _root = null;
+                            _root = null;
+                        }
                     }
                 }
             } else {
-                _connector.LeadConnection(_playerInteraction.PointOnPlane);
+                if (_stump.IsCursorInside(_playerInteraction.PointOnPlane)) {
+                    _connector.LeadConnection(_stump.Center);
+
+                    if (_connector.IsInRadius && _stump.CanConnect(inputFabric: _connector.Build.Fabric)) {
+                        _stump.HighLight();
+
+                        if (_leftButtonClick.WasPressedThisFrame()) {
+                            _stump.Connect();
+                            _connector.Cancel();
+                            _connector.Build.Stump = _stump;
+                            _root = null;
+                        }
+                    }
+                } else {
+                    _stump.Restore();
+                    _connector.LeadConnection(_playerInteraction.PointOnPlane);
+                }
             }
 
             if (_rightButtonClick.WasPressedThisFrame()) {
@@ -145,6 +167,10 @@ public class Startup : MonoBehaviour {
 
         if (_time >= _deltaTime) {
             foreach (var build in _builds) {
+                if (build.Stump != null) {
+                    build.Stump.Input(build.Fabric.GetOne());
+                }
+
                 foreach (var next in build.Next) {
                     if (build.Fabric.HasResource) {
                         next.Fabric.Input(build.Fabric.GetOne());
@@ -221,6 +247,7 @@ public class MapBuild {
     private Fabric _fabric;
 
     public List<MapBuild> Next = new();
+    public Stump Stump = null;
 
     public MapBuild(GameObject model, Build build, Vector2Int pointOnMap)
     {

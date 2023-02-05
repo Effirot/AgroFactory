@@ -13,6 +13,7 @@ public struct Fabric
     private float _totalTime;
 
     public bool HasResource => _output.Current > _output.Count;
+    public ResourceType Type => _output.Type;
 
     public void Init() {
         

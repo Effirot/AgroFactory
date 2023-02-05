@@ -4,6 +4,7 @@ public class Cell : MonoBehaviour {
     private enum OccupationStatus {
         Free,
         Occupied,
+        None,
     }
 
     private enum HighLightStatus {
@@ -24,7 +25,7 @@ public class Cell : MonoBehaviour {
     private float _initHeight;
     private float _targetHeight;
 
-    public bool IsOccupied => _status is OccupationStatus.Occupied;
+    public bool IsOccupied => _status is OccupationStatus.Occupied or OccupationStatus.None;
     public bool IsFree => _status is OccupationStatus.Free;
     public bool HasBuild => _build != null;
     public bool HasNoBuild => HasBuild is false;
@@ -36,16 +37,14 @@ public class Cell : MonoBehaviour {
 
         if (Physics.Raycast(transform.position, Vector3.down, out var hit, 10.0f, int.MaxValue) is false)
         {
-            Debug.Log("Did Not Hit");
+            _status = OccupationStatus.None;
             return;
         }
 
         if (isDark) {
-            transform.GetChild(0).gameObject.SetActive(true);
-            _renderer = transform.GetChild(0).GetComponent<MeshRenderer>();
+            InitModel(transform.GetChild(0));
         } else {
-            transform.GetChild(1).gameObject.SetActive(true);
-            _renderer = transform.GetChild(1).GetComponent<MeshRenderer>();
+            InitModel(transform.GetChild(1));
         }
     }
 
@@ -65,7 +64,7 @@ public class Cell : MonoBehaviour {
     public void HighLight() {
         if (_renderer == null) return;
 
-        _renderer.material.color = Color.grey;
+        _renderer.material.color = new Color(0.25f, 0.25f, 0.25f, 1.0f);
     }
 
     public void SetBuild(MapBuild build) {
@@ -94,7 +93,7 @@ public class Cell : MonoBehaviour {
         _isDirty = true;
 
         var color = _status switch {
-            OccupationStatus.Occupied => new Color(0.8f, 0.8f, 0.8f, 1.0f),
+            OccupationStatus.Occupied => Color.grey,
             _ => Color.white,
         };
 
@@ -107,5 +106,10 @@ public class Cell : MonoBehaviour {
         _isDirty = true;
 
         _targetHeight = remoteness * _maxHeight;
+    }
+
+    private void InitModel(Transform model) {
+        model.gameObject.SetActive(true);
+        _renderer = model.GetComponent<MeshRenderer>();
     }
 }
