@@ -1034,6 +1034,7 @@ MonoBehaviour:
   _selector: {fileID: 246078869}
   _deltaTime: 2
   _rootPattern: {fileID: 7436337479407613543, guid: 38d9aa77c94c346459662c1ed64f9505, type: 3}
+  _stump: {fileID: 0}
 --- !u!114 &1218452771
 MonoBehaviour:
   m_ObjectHideFlags: 0

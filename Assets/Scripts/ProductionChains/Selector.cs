@@ -86,18 +86,36 @@ public class Selector : MonoBehaviour
     private void ShowInfo(Build build) {
         _description.text = build.Description;
         if (build == null) return;
-        string str = GetString(build.Fabric.GetResorces());
+        string str = GetString(build.Fabric.GetResorces(), build.Fabric.Output);
         if (string.IsNullOrEmpty(str)) return;
-        _fullDescription.text = build.Description +"\n" + GetString(build.Fabric.GetResorces());
+        _fullDescription.text = build.Description +"\n" + GetString(build.Fabric.GetResorces(), build.Fabric.Output);
         StartCoroutine(SetImage());
     }
-    private string GetString(Resource[] resoure)
+    private string GetString(Resource[] resoure, Resource output)
     {
         string str = "";
-        if (resoure.Length == 0) return "Пусто \n";
+        if (resoure.Length == 0) {
+            var resourceName = output.Type switch {
+                ResourceType.Starch => "крахмал",
+                ResourceType.Sugar => "сахар",
+                ResourceType.Keratin => "кератин",
+                ResourceType.АТР => "АТФ",
+                _ => "неизвестный ресурс",
+            };
+            return $"Проихводит {resourceName}\n";
+        }
+
         foreach(Resource res in resoure)
         {
-            str += $"Ресурс: {res.Type}" + "\n" + $"Необходимо: {res.Count}" + "\n" + "\n";
+            var resourceName = res.Type switch {
+                ResourceType.Starch => "крахмал",
+                ResourceType.Sugar => "сахар",
+                ResourceType.Keratin => "кератин",
+                ResourceType.АТР => "АТФ",
+                _ => "неизвестный ресурс",
+            };
+
+            str += $"Ресурс: {resourceName}" + "\n" + $"Необходимо: {res.Count}" + "\n" + "\n";
         }
         return str;
     }
