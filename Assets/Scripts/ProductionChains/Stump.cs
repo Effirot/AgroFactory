@@ -1,11 +1,17 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Stump : MonoBehaviour
 {
+    [SerializeField] private Slider _lifeLine;
     [SerializeField] private ParticleSystem _highlight;
     [SerializeField] private ParticleSystem _stump;
     [SerializeField] private Resource _input;
     [SerializeField] private Vector2 _size;
+    [SerializeField] private int _maxResource;
+    [SerializeField] private int _timeDelay;
+    [SerializeField] private int _resourceReduce;
 
     public Vector3 Center {
         get {
@@ -15,9 +21,9 @@ public class Stump : MonoBehaviour
         }
     }
 
-    private void Start() {
-        // _highlight.Stop();
-        // _stump.Stop();
+    public void Start() {
+        UpdateLifeLine();
+        StartCoroutine(ReduceLife());
     }
 
     public bool IsCursorInside(Vector3 cursor) {
@@ -50,5 +56,17 @@ public class Stump : MonoBehaviour
     public void Connect() {
         _highlight.Stop();
         _stump.Play();
+    }
+
+    private IEnumerator ReduceLife() {
+        while (true) {
+            yield return new WaitForSeconds(_timeDelay);
+            _input.Current -= _resourceReduce;
+            UpdateLifeLine();
+        }
+    }
+    
+    private void UpdateLifeLine() {
+        _lifeLine.value = (float)_input.Current / (float)_maxResource;
     }
 }
